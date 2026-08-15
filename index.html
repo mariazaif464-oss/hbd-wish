@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>system.update // HBD 🌸</title>
+    <style>
+        :root {
+            --bg: #0b0f19;
+            --pink-main: #fbc6d0;
+            --pink-glow: rgba(251, 198, 208, 0.4);
+            --card-bg: rgba(18, 26, 43, 0.85);
+            --border: rgba(251, 198, 208, 0.25);
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --code-font: 'Fira Code', 'Courier New', Courier, monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: var(--code-font);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(at 10% 20%, rgba(251, 198, 208, 0.15) 0px, transparent 40%),
+                radial-gradient(at 90% 80%, rgba(168, 85, 247, 0.15) 0px, transparent 40%);
+        }
+
+        /* --- Floating Particles Background --- */
+        #particle-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            color: var(--pink-main);
+            opacity: 0.6;
+            animation: floatUp 8s linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0.8); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+        }
+
+        .main-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 520px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        /* --- STEP 1: CUTE ENVELOPE --- */
+        .envelope-container {
+            width: 100%;
+            background: var(--card-bg);
+            border: 2px solid var(--pink-main);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 25px var(--pink-glow);
+            text-align: center;
+            transition: all 0.4s ease;
+        }
+
+        .envelope-btn {
+            background: rgba(251, 198, 208, 0.1);
+            border: 1px dashed var(--pink-main);
+            color: var(--pink-main);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: var(--code-font);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .envelope-btn:hover {
+            background: var(--pink-main);
+            color: var(--bg);
+            box-shadow: 0 0 20px var(--pink-glow);
+            transform: translateY(-2px);
+        }
+
+        /* Envelope Letter Content (Hidden by default) */
+        .letter-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: left;
+            margin-top: 0;
+        }
+
+        .letter-content.open {
+            max-height: 500px;
+            margin-top: 1.5rem;
+            border-top: 1px solid var(--border);
+            padding-top: 1.5rem;
+        }
+
+        .code-text {
+            font-size: 0.92rem;
+            line-height: 1.8;
+            color: var(--pink-main);
+            white-space: pre-wrap;
+        }
+
+        /* --- STEP 2: CUTE TREASURE BOX --- */
+        .treasure-section {
+            width: 100%;
+            text-align: center;
+            opacity: 0.4;
+            pointer-events: none;
+            transition: all 0.5s ease;
+        }
+
+        .treasure-section.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .treasure-box {
+            background: var(--card-bg);
+            border: 2px solid var(--pink-main);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 0 30px var(--pink-glow);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .treasure-box:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 40px var(--pink-glow);
+        }
+
+        .treasure-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .treasure-text {
+            color: var(--pink-main);
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        /* --- MODAL FOR TREASURE REVEAL --- */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border: 2px solid var(--pink-main);
+            padding: 2.5rem;
+            border-radius: 16px;
+            max-width: 460px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 0 50px var(--pink-glow);
+            animation: popIn 0.3s ease forwards;
+        }
+
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.85); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .close-btn {
+            margin-top: 1.8rem;
+            padding: 0.6rem 2rem;
+            background: transparent;
+            border: 1px solid var(--pink-main);
+            color: var(--pink-main);
+            font-family: var(--code-font);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: var(--pink-main);
+            color: var(--bg);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="particle-bg"></div>
+
+    <div class="main-wrapper">
+
+        <!-- 1. CUTE ENVELOPE SECTION -->
+        <div class="envelope-container">
+            <button class="envelope-btn" onclick="openEnvelope()" id="env-btn">
+                <span>[open_envelope.exe]</span> ✉️🌸
+            </button>
+
+            <div class="letter-content" id="letter">
+                <div class="code-text">00:00 ─── 🎂 ─── [hbd.exe]
+
+.. cheers & bears, may u have many more years 🥂
+.. light & white, may your future stay bright ✨
+.. chain & rain, may god give u brain 🧠
+
+// :-
+may your coffee stay strong, code run error-free,
+& this year bring everything you’re actually working for.. ⚡
+
+less stress, maximum wins, & zero bugs in life 🎧💥
+
+▸▸▸ stay rare, keep leveling up man!!
+[ lvl.++] ─── 🪐 ─── happy_bday.sh</div>
+            </div>
+        </div>
+
+        <!-- 2. TREASURE BOX SECTION -->
+        <div class="treasure-section" id="treasure-sec">
+            <div class="treasure-box" onclick="openTreasure()">
+                <span class="treasure-icon" id="box-icon">🧰</span>
+                <span class="treasure-text">[unlock_treasure_box] ✦ 🎁</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- TREASURE SURPRISE MODAL -->
+    <div class="modal" id="treasureModal">
+        <div class="modal-content">
+            <span style="font-size: 3rem; display: block; margin-bottom: 1rem;">💎✨</span>
+            <h2 style="color: var(--pink-main); margin-bottom: 1rem;">Treasure Unlocked!</h2>
+            <p style="color: var(--text-muted); line-height: 1.8; font-size: 0.95rem;">
+                may your code run smooth, coffee stay strong, & life give u zero bugs. 
+                <br><br>
+                less drama, maximum wins, & continuous main character energy this year bro 🏎️⚡
+            </p>
+            <button class="close-btn" onclick="closeTreasure()">close_treasure()</button>
+        </div>
+    </div>
+
+    <script>
+        // Floating Pink Symbols Effect
+        const symbols = ['🌸', '✨', '💖', '⚡', '✦', '🎀'];
+        const bg = document.getElementById('particle-bg');
+
+        for (let i = 0; i < 22; i++) {
+            let p = document.createElement('div');
+            p.className = 'particle';
+            p.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.animationDuration = (Math.random() * 5 + 5) + 's';
+            p.style.fontSize = (Math.random() * 12 + 14) + 'px';
+            bg.appendChild(p);
+        }
+
+        // Open Envelope Function
+        function openEnvelope() {
+            document.getElementById('letter').classList.add('open');
+            document.getElementById('env-btn').style.display = 'none';
+            // Unlock Treasure Box step
+            document.getElementById('treasure-sec').classList.add('active');
+        }
+
+        // Open Treasure Box Function
+        function openTreasure() {
+            document.getElementById('box-icon').innerText = '💎';
+            document.getElementById('treasureModal').style.display = 'flex';
+        }
+
+        // Close Treasure Box Modal
+        function closeTreasure() {
+            document.getElementById('treasureModal').style.display = 'none';
+        }
+    </script>
+</body>
+  </html>
+
