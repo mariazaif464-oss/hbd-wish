@@ -3,78 +3,378 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A Grand Birthday Surprise!</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Birthday Surprise ✨</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Nunito', sans-serif;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: #fdf5f8;
+            background-image: radial-gradient(#f0d2e2 2px, transparent 2px);
+            background-size: 24px 24px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .banner-container {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            z-index: 10;
+        }
+
+        .flag {
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 30px solid #f6a6bc;
+        }
+        .flag:nth-child(2n) { border-top-color: #b897ea; }
+        .flag:nth-child(3n) { border-top-color: #f7c797; }
+        .flag:nth-child(4n) { border-top-color: #88d8d4; }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border: 5px solid #ffffff;
+            width: 86%;
+            max-width: 330px;
+            padding: 25px 20px;
+            border-radius: 32px;
+            box-shadow: 0 20px 40px rgba(223, 187, 206, 0.4), inset 0 0 15px rgba(255, 255, 255, 0.8);
+            text-align: center;
+            position: absolute;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0;
+            transform: scale(0.8) translateY(30px);
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .card.active {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            pointer-events: all;
+        }
+
+        h2 {
+            font-family: 'Fredoka', cursive;
+            color: #614465;
+            font-size: 1.35rem;
+            margin-top: 10px;
+            margin-bottom: 6px;
+        }
+
+        p {
+            color: #8c7390;
+            font-size: 0.88rem;
+            line-height: 1.4;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #f3b1d1 0%, #cba2e6 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 22px;
+            font-size: 0.9rem;
+            font-weight: 800;
+            font-family: 'Fredoka', cursive;
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(225, 160, 200, 0.45);
+            transition: transform 0.15s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .progress-box {
+            width: 100%;
+            background: #f4e4ed;
+            height: 10px;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-top: 15px;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #f1a5c6, #b992e8);
+            transition: width 2.8s ease-in-out;
+        }
+
+        .cake-wrapper {
+            position: relative;
+            width: 110px;
+            height: 110px;
+            margin: 0 auto;
+        }
+
+        .flame {
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 20px;
+            background: #ffb703;
+            border-radius: 50% 50% 20% 20%;
+            box-shadow: 0 0 10px #ffb703, 0 0 18px #fb8500;
+            opacity: 0;
+            transition: opacity 0.4s;
+            animation: flicker 0.6s infinite alternate;
+        }
+
+        .flame.lit { opacity: 1; }
+
+        @keyframes flicker {
+            0% { transform: translateX(-50%) scale(1); }
+            100% { transform: translateX(-50%) scale(1.15); }
+        }
+
+        .balloon-group {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+
+        .balloon-slot {
+            width: 58px;
+            height: 68px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .balloon {
+            width: 100%;
+            height: 100%;
+            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+            font-family: 'Fredoka', cursive;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 2;
+        }
+
+        .balloon.popped {
+            transform: scale(0);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .b1 { background: #f6a6bc; }
+        .b2 { background: #b897ea; }
+        .b3 { background: #f7c797; }
+        .b4 { background: #88d8d4; }
+
+        .revealed-text {
+            color: #614465;
+            font-weight: 800;
+            font-size: 0.95rem;
+            font-family: 'Fredoka', cursive;
+            z-index: 1;
+            animation: popText 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popText {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+
+        .gift-box {
+            font-size: 4rem;
+            cursor: pointer;
+            margin: 15px 0;
+            animation: bounce 1s infinite alternate;
+        }
+
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-10px); }
+        }
+    </style>
 </head>
 <body>
 
-    <audio id="backgroundMusic" loop>
-        <source src="birthday_song.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
-    </audio>
+    <!-- Background Music Element -->
+    <audio id="bgMusic" autoplay loop src="song.mp3"></audio>
 
-    <div class="step active" id="step1">
-        <div class="welcome-card">
-            <h1 class="welcome-title">You've got a surprise!</h1>
-            <p class="welcome-message">Click below to start your birthday journey...</p>
-            <button id="startButton" class="action-button">Start the Celebration!</button>
+    <div class="banner-container">
+        <div class="flag"></div><div class="flag"></div><div class="flag"></div>
+        <div class="flag"></div><div class="flag"></div><div class="flag"></div>
+        <div class="flag"></div><div class="flag"></div>
+    </div>
+
+    <!-- SCREEN 1: Loading -->
+    <div class="card active" id="s1">
+        <div style="font-size: 3rem; margin-bottom: 10px;">🎂</div>
+        <h2>Loading your birthday surprise...</h2>
+        <div class="progress-box">
+            <div class="progress-bar" id="pbar"></div>
         </div>
     </div>
 
-    <div class="step" id="step2">
-        <div class="envelope-container" id="envelopeContainer">
-            <div class="envelope">
-                <div class="envelope-back"></div>
-                <div class="envelope-front"></div>
-                <div class="envelope-flap"></div>
-                <div class="envelope-seal"></div>
+    <!-- SCREEN 2: Age Card -->
+    <div class="card" id="s2">
+        <svg viewBox="0 0 100 100" width="100" height="100">
+            <circle cx="32" cy="32" r="10" fill="#edd0be"/>
+            <circle cx="68" cy="32" r="10" fill="#edd0be"/>
+            <circle cx="32" cy="32" r="5" fill="#f7a8b8"/>
+            <circle cx="68" cy="32" r="5" fill="#f7a8b8"/>
+            <circle cx="50" cy="55" r="28" fill="#f5dec8"/>
+            <circle cx="42" cy="50" r="3.5" fill="#4a3e3d"/>
+            <circle cx="58" cy="50" r="3.5" fill="#4a3e3d"/>
+            <ellipse cx="50" cy="58" rx="7" ry="5" fill="#ffffff"/>
+            <ellipse cx="50" cy="56" rx="3.5" ry="2.5" fill="#4a3e3d"/>
+            <circle cx="36" cy="56" r="4" fill="#f7a8b8" opacity="0.6"/>
+            <circle cx="64" cy="56" r="4" fill="#f7a8b8" opacity="0.6"/>
+        </svg>
+        <h2>A Cutiepie was born today, 19 years ago!</h2>
+        <p>Yes, it's YOU! A little surprise awaits...</p>
+        <button class="btn" onclick="nextCard('s2', 's3')">🎁 Tap to start</button>
+    </div>
+
+    <!-- SCREEN 3: Cake & Candle -->
+    <div class="card" id="s3">
+        <div class="cake-wrapper">
+            <div class="flame" id="flame"></div>
+            <svg viewBox="0 0 100 100" width="110" height="110">
+                <rect x="48" y="22" width="4" height="20" fill="#c39be3" rx="2"/>
+                <path d="M 20 60 Q 25 52 30 60 T 40 60 T 50 60 T 60 60 T 70 60 T 80 60 L 80 82 A 6 6 0 0 1 74 88 L 26 88 A 6 6 0 0 1 20 82 Z" fill="#f4a8c3"/>
+                <path d="M 20 45 Q 25 38 30 45 T 40 45 T 50 45 T 60 45 T 70 45 T 80 45 L 80 62 L 20 62 Z" fill="#ffffff"/>
+            </svg>
+        </div>
+        <h2 id="cakeTitle">Make a Wish!</h2>
+        <p id="cakeSub">Tap to light the candle ✨</p>
+        <button class="btn" id="cakeBtn" onclick="lightCandle()">🕯️ Light Candle</button>
+    </div>
+
+    <!-- SCREEN 4: Pop Balloons -->
+    <div class="card" id="s4">
+        <h2>Pop all 4 balloons</h2>
+        <div class="balloon-group">
+            <div class="balloon-slot">
+                <span class="revealed-text">You</span>
+                <div class="balloon b1" onclick="pop(this)">1</div>
             </div>
-            <p class="click-instruction">Click the envelope!</p>
-        </div>
-    </div>
-
-    <div class="step" id="step3">
-        <div class="letter-container" id="letterContainer">
-            <div class="letter">
-                <p>Dearest [Name],</p>
-                <p>This message carries wishes straight from the heart, ready to unfold into a memorable celebration just for you.</p>
-                <p>Click the button to reveal your special birthday surprise!</p>
-                <button id="unfoldButton" class="action-button">Unfold My Surprise!</button>
+            <div class="balloon-slot">
+                <span class="revealed-text">are</span>
+                <div class="balloon b2" onclick="pop(this)">2</div>
+            </div>
+            <div class="balloon-slot">
+                <span class="revealed-text">a</span>
+                <div class="balloon b3" onclick="pop(this)">3</div>
+            </div>
+            <div class="balloon-slot">
+                <span class="revealed-text">Cutiee</span>
+                <div class="balloon b4" onclick="pop(this)">4</div>
             </div>
         </div>
+        <button class="btn" id="balNext" style="display:none;" onclick="nextCard('s4', 's6')">Next ➔</button>
     </div>
 
-    <div class="step" id="step4">
-        <div class="celebration-container">
-            <div class="fireworks-container"></div>
-            <div class="confetti-cannon-container"></div>
-            <div class="balloons-container"></div>
-
-            <div class="celebration-card">
-                <p class="sub-greeting">To the amazing</p>
-                <h1 class="main-greeting typewriter-text" id="finalGreeting">Happy Birthday,</h1>
-                <h2 class="recipient-name">SARDAR SAHB!</h2>
-                <div class="cake-container">
-                    <div class="cake">
-                        <div class="plate"></div>
-                        <div class="layer layer-bottom"></div>
-                        <div class="layer layer-middle"></div>
-                        <div class="layer layer-top"></div>
-                        <div class="icing"></div>
-                        <div class="drip drip1"></div>
-                        <div class="drip drip2"></div>
-                        <div class="drip drip3"></div>
-                        <div class="candle">
-                            <div class="flame" id="candleFlame"></div>
-                        </div>
-                    </div>
-                </div>
-                <p class="final-wish">May your special day be filled with immense joy, laughter, and all the wonderful things life has to offer. Here's to another year of amazing adventures!</p>
-                <p class="signature">With love and best wishes <span class="heart-icon"></span></p>
-            </div>
-        </div>
+    <!-- SCREEN 6: Message -->
+    <div class="card" id="s6">
+        <h2>A Special Message</h2>
+        <p style="text-align: left; background: #faf0f5; padding: 12px; border-radius: 14px; border: 1px solid #f0d8e5; max-height: 150px; overflow-y: auto; font-size: 0.85rem;">
+            Happy Birthday, Kharuss!😇🎀 You deserve all the happiness, love, and smiles in the world today and always. You have this special way of making everything around you brighter! ✨💖
+        </p>
+        <button class="btn" onclick="nextCard('s6', 's7')">Next ➔</button>
     </div>
 
-    <script src="script.js"></script>
+    <!-- SCREEN 7: Gift Box -->
+    <div class="card" id="s7">
+        <h2>One Last Thing...</h2>
+        <div class="gift-box" onclick="openGift()">🎁</div>
+        <p id="giftText">Tap the gift</p>
+    </div>
+
+    <script>
+        const music = document.getElementById("bgMusic");
+
+        function playMusic() {
+            if (music.paused) {
+                music.play().catch(e => console.log("Autoplay waiting for touch"));
+            }
+        }
+
+        window.onload = () => {
+            playMusic();
+            setTimeout(() => { document.getElementById('pbar').style.width = '100%'; }, 200);
+            setTimeout(() => { nextCard('s1', 's2'); }, 3000);
+        };
+
+        // Fallback: Pehle screen touch par sound start karne ke liye
+        document.body.addEventListener('click', playMusic, { once: true });
+        document.body.addEventListener('touchstart', playMusic, { once: true });
+
+        function nextCard(currentId, nextId) {
+            playMusic();
+            document.getElementById(currentId).classList.remove('active');
+            document.getElementById(nextId).classList.add('active');
+        }
+
+        let candleLit = false;
+        function lightCandle() {
+            if(!candleLit) {
+                document.getElementById('flame').classList.add('lit');
+                document.getElementById('cakeTitle').innerText = "Happy Birthday!";
+                document.getElementById('cakeSub').innerText = "Wish you endless joy!";
+                document.getElementById('cakeBtn').innerText = "Next ➔";
+                confetti({ particleCount: 40, spread: 50, origin: { y: 0.6 } });
+                candleLit = true;
+            } else {
+                nextCard('s3', 's4');
+            }
+        }
+
+        let poppedCount = 0;
+        function pop(element) {
+            element.classList.add('popped');
+            poppedCount++;
+            confetti({ particleCount: 15, spread: 35 });
+            if(poppedCount === 4) {
+                document.getElementById('balNext').style.display = 'inline-flex';
+            }
+        }
+
+        function openGift() {
+            document.getElementById('giftText').innerHTML = "<strong style='color:#614465; font-size:1.1rem;'>Wish You lots of happiness 🩷🍬</strong><br><br>Once again, Happy Birthday! Hope you loved your surprise.";
+            confetti({ particleCount: 100, spread: 80, origin: { y: 0.5 } });
+        }
+    </script>
 </body>
 </html>
