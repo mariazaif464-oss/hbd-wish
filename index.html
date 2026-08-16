@@ -3,305 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>system.update // HBD // aesthetic.exe</title>
-    <style>
-        :root {
-            --bg: #0b0f19;
-            --pink-accent: #fbc6d0; /* Cute Pink */
-            --pink-glow: rgba(251, 198, 208, 0.35);
-            --card-bg: rgba(18, 26, 43, 0.75);
-            --border: rgba(255, 255, 255, 0.1);
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
-            --code-font: 'Fira Code', 'Courier New', Courier, monospace;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            background-color: var(--bg);
-            color: var(--text-main);
-            font-family: var(--code-font);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1.5rem;
-            overflow-x: hidden;
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(251, 198, 208, 0.12) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.12) 0px, transparent 50%);
-        }
-
-        .container {
-            width: 100%;
-            max-width: 580px;
-            background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4),
-                        0 0 40px var(--pink-glow);
-            position: relative;
-        }
-
-        .terminal-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .dots {
-            display: flex;
-            gap: 8px;
-        }
-
-        .dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
-
-        .red { background: #ff5f56; }
-        .yellow { background: #ffbd2e; }
-        .green { background: #27c93f; }
-
-        .title-tag {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            letter-spacing: 1px;
-        }
-
-        .code-block {
-            font-size: 0.95rem;
-            line-height: 1.8;
-            color: var(--text-main);
-            white-space: pre-wrap;
-        }
-
-        .typed-output {
-            color: var(--pink-accent);
-        }
-
-        /* Interactive Trigger Button */
-        .gift-btn {
-            margin-top: 2rem;
-            width: 100%;
-            padding: 0.9rem;
-            background: transparent;
-            border: 1px solid var(--pink-accent);
-            color: var(--pink-accent);
-            font-family: var(--code-font);
-            font-size: 0.9rem;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .gift-btn:hover {
-            background: var(--pink-accent);
-            color: var(--bg);
-            box-shadow: 0 0 20px var(--pink-glow);
-            transform: translateY(-2px);
-        }
-
-        /* --- Moveable Pink Stickers --- */
-        #mouse-stickers {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            pointer-events: none; /* Crucial: clicks pass through */
-            z-index: 50;
-        }
-
-        .sticker {
-            position: absolute;
-            font-size: 20px;
-            color: var(--pink-accent);
-            transform: translate(-50%, -50%);
-            transition: transform 0.05s ease;
-            opacity: 0.7;
-        }
-
-        /* Continuous drift movement for stickers */
-        @keyframes floatSticker {
-            0% { transform: translate(-50%, -50%) translate(0, 0); }
-            100% { transform: translate(-50%, -50%) translate(10px, 10px); }
-        }
-
-        /* --- Surprise Modal --- */
-        #surprise:target {
-            display: flex;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(8px);
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            padding: 1rem;
-        }
-
-        .modal-content {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            padding: 2.5rem;
-            border-radius: 16px;
-            max-width: 480px;
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 0 50px var(--pink-glow);
-            animation: popIn 0.3s ease forwards;
-        }
-
-        @keyframes popIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .close-btn {
-            margin-top: 2rem;
-            padding: 0.6rem 2rem;
-            background: transparent;
-            border: 1px solid var(--pink-accent);
-            color: var(--pink-accent);
-            font-family: var(--code-font);
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .close-btn:hover {
-            background: var(--pink-accent);
-            color: var(--bg);
-        }
-    </style>
+    <title>A Grand Birthday Surprise!</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- MOVEABLE PINK STICKERS (Cursor Trail) -->
-    <div id="mouse-stickers">
-        <!-- These are generated and moved by JS -->
+    <audio id="backgroundMusic" loop>
+        <source src="birthday_song.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <div class="step active" id="step1">
+        <div class="welcome-card">
+            <h1 class="welcome-title">You've got a surprise!</h1>
+            <p class="welcome-message">Click below to start your birthday journey...</p>
+            <button id="startButton" class="action-button">Start the Celebration!</button>
+        </div>
     </div>
 
-    <!-- TERMINAL CARD -->
-    <div class="container">
-        <div class="terminal-header">
-            <div class="dots">
-                <span class="dot red"></span>
-                <span class="dot yellow"></span>
-                <span class="dot green"></span>
+    <div class="step" id="step2">
+        <div class="envelope-container" id="envelopeContainer">
+            <div class="envelope">
+                <div class="envelope-back"></div>
+                <div class="envelope-front"></div>
+                <div class="envelope-flap"></div>
+                <div class="envelope-seal"></div>
             </div>
-            <span class="title-tag">bash // aesthetic.exe</span>
-        </div>
-
-        <div class="code-block" id="typed-output">
-<!-- Typing effect output here -->
-        </div>
-
-        <button class="gift-btn" onclick="document.location.href='#surprise'">
-            <span>[execute_system_update]</span> 🎁
-        </button>
-    </div>
-
-    <!-- Hidden Surprise Modal -->
-    <div class="modal" id="surprise">
-        <div class="modal-content">
-            <h2 style="margin-bottom: 1.5rem; color: #fbc6d0;">🎉 Level Up: Unlocked!</h2>
-            <p style="color: #9ca3af; line-height: 1.8; font-size: 1rem;">
-                may your coffee stay strong, code run smooth, & life give u zero bugs.
-                <br><br>
-                go crush it today, mate! 🥂✨
-            </p>
-            <button class="close-btn" onclick="document.location.href='#close'">close()</button>
+            <p class="click-instruction">Click the envelope!</p>
         </div>
     </div>
 
-    <script>
-        // JS is still here for typing and mouse trail
-        // Same as image_6.png scripts, but updated typedText
+    <div class="step" id="step3">
+        <div class="letter-container" id="letterContainer">
+            <div class="letter">
+                <p>Dearest [Name],</p>
+                <p>This message carries wishes straight from the heart, ready to unfold into a memorable celebration just for you.</p>
+                <p>Click the button to reveal your special birthday surprise!</p>
+                <button id="unfoldButton" class="action-button">Unfold My Surprise!</button>
+            </div>
+        </div>
+    </div>
 
-        // 1. TYPING EFFECT
-        const textElement = document.getElementById('typed-output');
-        const typedText = 
-`00:00 ─── 🎂 ─── [hbd.exe]
+    <div class="step" id="step4">
+        <div class="celebration-container">
+            <div class="fireworks-container"></div>
+            <div class="confetti-cannon-container"></div>
+            <div class="balloons-container"></div>
 
-.. cheers & bears, may u have many more years 🥂
-.. light & white, may your future stay bright ✨
-.. chain & rain, may god give u brain 🧠
+            <div class="celebration-card">
+                <p class="sub-greeting">To the amazing</p>
+                <h1 class="main-greeting typewriter-text" id="finalGreeting">Happy Birthday,</h1>
+                <h2 class="recipient-name">SARDAR SAHB!</h2>
+                <div class="cake-container">
+                    <div class="cake">
+                        <div class="plate"></div>
+                        <div class="layer layer-bottom"></div>
+                        <div class="layer layer-middle"></div>
+                        <div class="layer layer-top"></div>
+                        <div class="icing"></div>
+                        <div class="drip drip1"></div>
+                        <div class="drip drip2"></div>
+                        <div class="drip drip3"></div>
+                        <div class="candle">
+                            <div class="flame" id="candleFlame"></div>
+                        </div>
+                    </div>
+                </div>
+                <p class="final-wish">May your special day be filled with immense joy, laughter, and all the wonderful things life has to offer. Here's to another year of amazing adventures!</p>
+                <p class="signature">With love and best wishes <span class="heart-icon"></span></p>
+            </div>
+        </div>
+    </div>
 
-// :-
-may your coffee stay strong, code run error-free,
-& this year bring everything you’re actually working for.. ⚡
-
-less stress, maximum wins, & zero bugs in life 🎧💥
-
-▸▸▸ stay rare, keep leveling up!!
-[ lvl.++] ─── 🪐 ─── happy_bday.sh`;
-
-        let i = 0;
-        function typeWriter() {
-            if (i < typedText.length) {
-                textElement.append(typedText.charAt(i));
-                i++;
-                setTimeout(typeWriter, 40); // 40ms speed
-            }
-        }
-        document.addEventListener('DOMContentLoaded', typeWriter);
-
-        // 2. MOVEABLE STICKERS
-        const stickerContainer = document.getElementById('mouse-stickers');
-        const emojis = ['🌸', '✨', '💖', '⚡', '✦', '🎀'];
-
-        const stickerElements = emojis.map((emoji) => {
-            const el = document.createElement('div');
-            el.className = 'sticker';
-            el.innerText = emoji;
-            // Drifting animation setup
-            el.style.animation = `floatSticker 2s ease-in-out infinite alternate`;
-            el.style.animationDelay = `${Math.random() * 2}s`;
-            stickerContainer.appendChild(el);
-            return {
-                element: el,
-                x: 0,
-                y: 0,
-                lag: Math.random() * 0.1 + 0.05, // Smooth lag effect
-            };
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            const mouseX = e.clientX;
-            const mouseY = e.clientY;
-
-            stickerElements.forEach((s) => {
-                // Update target based on lag
-                s.x += (mouseX - s.x) * s.lag;
-                s.y += (mouseY - s.y) * s.lag;
-                s.element.style.left = `${s.x}px`;
-                s.element.style.top = `${s.y}px`;
-            });
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
